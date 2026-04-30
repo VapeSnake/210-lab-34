@@ -34,6 +34,53 @@ public:
         }
     }
 
+        // Depth-First Search
+    void DFSUtil(int v, vector<bool>& visited) {
+        visited[v] = true;
+        cout << v << " ";
+
+        for (auto &neighbor : adjList[v]) {
+            int next = neighbor.first;
+            if (!visited[next])
+                DFSUtil(next, visited);
+        }
+    }
+
+    // Public DFS
+    void DFS(int start) {
+        vector<bool> visited(SIZE, false);
+        cout << "DFS starting at " << start << ": ";
+        DFSUtil(start, visited);
+        cout << endl;
+    }
+
+    // Breadth-First Search
+    void BFS(int start) {
+        vector<bool> visited(SIZE, false);
+        vector<int> queue;
+
+        visited[start] = true;
+        queue.push_back(start);
+
+        cout << "BFS starting at " << start << ": ";
+
+        int index = 0;
+        while (index < queue.size()) {
+            int v = queue[index++];
+            cout << v << " ";
+
+            for (auto &neighbor : adjList[v]) {
+                int next = neighbor.first;
+                if (!visited[next]) {
+                    visited[next] = true;
+                    queue.push_back(next);
+                }
+            }
+        }
+        cout << endl;
+    }
+
+
     // Print the graph's adjacency list
     void printGraph() {
         cout << "Graph's adjacency list:" << endl;
@@ -58,6 +105,10 @@ int main() {
 
     // Prints adjacency list representation of graph
     graph.printGraph();
+    // Performs DFS and BFS starting from vertex 0
+    graph.DFS(0);
+    graph.BFS(0);
+
 
     return 0;
 }
