@@ -81,7 +81,7 @@ public:
     }
 
 
-    // Print the graph's adjacency list
+    // Print the graph's adjacency list.
     void printGraph() {
         cout << "Graph's adjacency list:" << endl;
         for (int i = 0; i < adjList.size(); i++) {
