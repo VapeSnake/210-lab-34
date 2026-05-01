@@ -1,7 +1,7 @@
 // COMSC-210 | Lab 34 | Noel Mier-Luna
 #include <iostream>
 #include <vector>
-#include <queue> // For Dijkstra's Algorithm
+#include <queue>     // For Dijkstra's Algorithm
 #include <algorithm> // For sorting edges in Kruskal's Algorithm
 using namespace std;
 
@@ -174,14 +174,14 @@ public:
     // --- Minimum Spanning Tree (Kruskal's Algorithm) ---
     void runMinimumSpanningTree()
     { // NEW METHOD
-        struct MSTEdge
-        {
-            int deviceA; // originally src
-            int deviceB; // originally dest
-            int latency; // originally weight
+        struct BackboneLink
+        {                  // originally MSTEdge
+            int endpointA; // originally deviceA
+            int endpointB; // originally deviceB
+            int cableCost; // originally latency
         };
 
-        vector<MSTEdge> allLinks;
+        vector<BackboneLink> allLinks;
 
         // Convert adjacency list to edge list
         for (int device = 0; device < SIZE; device++)
@@ -201,9 +201,9 @@ public:
 
         // Sort edges by latency (ascending)
         sort(allLinks.begin(), allLinks.end(),
-             [](const MSTEdge &a, const MSTEdge &b)
+             [](const BackboneLink &a, const BackboneLink &b)
              {
-                 return a.latency < b.latency;
+                 return a.cableCost < b.cableCost;
              });
 
         // Prepare DSU
@@ -211,22 +211,21 @@ public:
         for (int i = 0; i < SIZE; i++)
             parent[i] = i;
 
-        cout << "Minimum Spanning Tree edges:" << endl;
+        cout << "Minimum-Cost Network Backbone:" << endl;
 
         // Kruskal's algorithm
         for (auto &link : allLinks)
         {
-            int a = link.deviceA;
-            int b = link.deviceB;
+            int a = link.endpointA;
+            int b = link.endpointB;
 
             if (findSet(a, parent) != findSet(b, parent))
             {
                 unionSet(a, b, parent, rank);
 
-                cout << "Edge from " << a
-                     << " to " << b
-                     << " with capacity: " << link.latency
-                     << " units" << endl;
+                cout << "Backbone link: Device " << a
+     << " <--> Device " << b
+     << " | Cable cost (latency): " << link.cableCost << " ms" << endl;
             }
         }
     }
@@ -241,10 +240,10 @@ int main()
     NetworkGraph network(links);
 
     network.printNetwork();
-    network.runDeepScan(0);     // DFS from ServerRoom
-    network.runMinHopRoute(0);  // BFS from ServerRoom
-    network.runShortestPath(0); // Dijkstra's from ServerRoom
-    network.runMinimumSpanningTree(); // Kruskal's for MST
+    network.runDeepScan(0);           // DFS from ServerRoom. Simulates a deep route scan to find all devices in the network.
+    network.runMinHopRoute(0);        // BFS from ServerRoom. Simulates finding all devices reachable with the fewest hops (least number of cables).
+    network.runShortestPath(0);       // Dijkstra's from ServerRoom.  Simulates finding lowest-latency routes for data packets.
+    network.runMinimumSpanningTree(); // Kruskal's for MST. Simulates building a minimum-cost backbone network.
 
     return 0;
 }
