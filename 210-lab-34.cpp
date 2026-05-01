@@ -3,7 +3,7 @@
 #include <vector>
 using namespace std;
 
-const int SIZE = 13; // Modified after dropping two nodes and adding 6 new nodes.
+const int SIZE = 11; // Reduced to 11 to avoid empty vertices in adjacency list.
 
 struct Edge {
     int src, dest, weight;
@@ -94,19 +94,16 @@ public:
 };
 
 int main() {
-    // Creates a vector of graph edges/weights
+    // Creates a vector of graph edges/weights.
     vector<Edge> edges = {
-    {0,2,15}, {0,4,7}, {2,5,10},
-    {4,6,3}, {5,6,12},
-
-    // New nodes and connections
-    {7,0,9}, {7,8,4}, {8,2,11},
-    {9,4,6}, {9,10,13}, {10,11,5},
-    {11,12,14}, {12,6,8}
-
-    // Dropped nodes and connections. They will be empty in adjacency list.
-    // {1,3,5}, {3,7,8}
+    {0,1,10}, {0,2,7},
+    {1,3,6}, {2,4,9},
+    {3,5,4}, {5,6,3},
+    {6,7,11}, {7,8,5},
+    {8,9,8}, {9,10,12},
+    {10,4,14}, {6,1,5}
 };
+
 
 
     // Creates graph
