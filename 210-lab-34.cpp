@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <queue> // For Dijkstra's Algorithm
+#include <algorithm> // For sorting edges in Kruskal's Algorithm
 using namespace std;
 
 const int SIZE = 11; // Reduced to 11 to avoid empty vertices in adjacency list.
@@ -148,6 +149,87 @@ public:
             cout << startDevice << " -> " << i << " : " << minLatency[i] << endl;
         }
     }
+    int findSet(int device, vector<int> &parent)
+    {
+        if (parent[device] == device)
+            return device;
+        return parent[device] = findSet(parent[device], parent); // path compression
+    }
+
+    void unionSet(int a, int b, vector<int> &parent, vector<int> &rank)
+    {
+        a = findSet(a, parent);
+        b = findSet(b, parent);
+
+        if (a != b)
+        {
+            if (rank[a] < rank[b])
+                swap(a, b);
+            parent[b] = a;
+            if (rank[a] == rank[b])
+                rank[a]++;
+        }
+    }
+
+    // --- Minimum Spanning Tree (Kruskal's Algorithm) ---
+    void runMinimumSpanningTree()
+    { // NEW METHOD
+        struct MSTEdge
+        {
+            int deviceA; // originally src
+            int deviceB; // originally dest
+            int latency; // originally weight
+        };
+
+        vector<MSTEdge> allLinks;
+
+        // Convert adjacency list to edge list
+        for (int device = 0; device < SIZE; device++)
+        {
+            for (auto &conn : adjacencyList[device])
+            {
+                int neighbor = conn.first;
+                int latency = conn.second;
+
+                if (device < neighbor)
+                {
+                    // avoid duplicates (undirected graph)
+                    allLinks.push_back({device, neighbor, latency});
+                }
+            }
+        }
+
+        // Sort edges by latency (ascending)
+        sort(allLinks.begin(), allLinks.end(),
+             [](const MSTEdge &a, const MSTEdge &b)
+             {
+                 return a.latency < b.latency;
+             });
+
+        // Prepare DSU
+        vector<int> parent(SIZE), rank(SIZE, 0);
+        for (int i = 0; i < SIZE; i++)
+            parent[i] = i;
+
+        cout << "Minimum Spanning Tree edges:" << endl;
+
+        // Kruskal's algorithm
+        for (auto &link : allLinks)
+        {
+            int a = link.deviceA;
+            int b = link.deviceB;
+
+            if (findSet(a, parent) != findSet(b, parent))
+            {
+                unionSet(a, b, parent, rank);
+
+                cout << "Edge from " << a
+                     << " to " << b
+                     << " with capacity: " << link.latency
+                     << " units" << endl;
+            }
+        }
+    }
 };
 
 int main()
@@ -159,9 +241,10 @@ int main()
     NetworkGraph network(links);
 
     network.printNetwork();
-    network.runDeepScan(0);    // DFS from ServerRoom
-    network.runMinHopRoute(0); // BFS from ServerRoom
+    network.runDeepScan(0);     // DFS from ServerRoom
+    network.runMinHopRoute(0);  // BFS from ServerRoom
     network.runShortestPath(0); // Dijkstra's from ServerRoom
+    network.runMinimumSpanningTree(); // Kruskal's for MST
 
     return 0;
 }
