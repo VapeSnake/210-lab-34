@@ -233,17 +233,59 @@ public:
 
 int main()
 {
-    // Creates a vector of  network links (edges) with latency (weight)
     vector<NetworkLink> links = {
-        {0, 1, 10}, {0, 2, 7}, {1, 3, 6}, {2, 4, 9}, {3, 5, 4}, {5, 6, 3}, {6, 7, 11}, {7, 8, 5}, {8, 9, 8}, {9, 10, 12}, {10, 4, 14}, {6, 1, 5}};
+        {0, 1, 10}, {0, 2, 7}, {1, 3, 6}, {2, 4, 9}, {3, 5, 4},
+        {5, 6, 3}, {6, 7, 11}, {7, 8, 5}, {8, 9, 8}, {9, 10, 12},
+        {10, 4, 14}, {6, 1, 5}
+    };
 
     NetworkGraph network(links);
 
-    network.printNetwork();
-    network.runDeepScan(0);           // DFS from ServerRoom. Simulates a deep route scan to find all devices in the network.
-    network.runMinHopRoute(0);        // BFS from ServerRoom. Simulates finding all devices reachable with the fewest hops (least number of cables).
-    network.runShortestPath(0);       // Dijkstra's from ServerRoom.  Simulates finding lowest-latency routes for data packets.
-    network.runMinimumSpanningTree(); // Kruskal's for MST. Simulates building a minimum-cost backbone network.
+    int choice;
+    // Main menu loop
+    do {
+        cout << "\n=== Network Routing Simulator Menu ===\n";
+        cout << "1. Display Network Topology\n";
+        cout << "2. Deep Route Scan (DFS)\n";
+        cout << "3. Minimum-Hop Route (BFS)\n";
+        cout << "4. Shortest Path Routing (Dijkstra)\n";
+        cout << "5. Minimum-Cost Network Backbone (MST)\n";
+        cout << "6. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        cout << endl;
+
+        switch (choice) {
+            case 1:
+                network.printNetwork();
+                break;
+
+            case 2:
+                network.runDeepScan(0); // ServerRoom
+                break;
+
+            case 3:
+                network.runMinHopRoute(0); // ServerRoom
+                break;
+
+            case 4:
+                network.runShortestPath(0); // ServerRoom
+                break;
+
+            case 5:
+                network.runMinimumSpanningTree();
+                break;
+
+            case 6:
+                cout << "Exiting Network Routing Simulator...\n";
+                break;
+
+            default:
+                cout << "Invalid choice. Please try again.\n";
+        }
+
+    } while (choice != 6);
 
     return 0;
 }
