@@ -5,7 +5,7 @@ using namespace std;
 
 const int SIZE = 11; // Reduced to 11 to avoid empty vertices in adjacency list.
 
-struct Edge {
+struct NetworkLink {
     int src, dest, weight;
 };
 
